@@ -62,7 +62,7 @@ def getDiscount(productUrl):
     elems = soup.select('#productPageRightSectionTop-stickers-discount > div > div') #get the selector path for the discount
     return elems[0].text.strip()
 
-print('-------------------------------------------- Vagabond books --------------------------------------------------------------------------')
+print('------------------------------------------- Vagabond books -------------------------------------------')
 
 try:
     vagabond3price = getPriceBT('https://www.bertrand.pt/livro/vagabond-3-takehiko-inoue/15711331')
@@ -149,7 +149,7 @@ except:
     print('Vagabond vol.12 is not available on Amazon\n')
 
 
-print('--------------------------------------------- Gaming PC --------------------------------------------------------------------\n')
+print('------------------------------------------- Gaming PC -------------------------------------------\n')
 
 try:
     priceLG = getPricePC('https://www.pccomponentes.pt/lg-29wn600-w-29-led-ips-ultrawide-fullhd-freesync')
