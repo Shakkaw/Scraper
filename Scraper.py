@@ -149,7 +149,7 @@ except:
     print('Vagabond vol.12 is not available on Amazon\n')
 
 
-print('--------------------------------------------- Gaming PC --------------------------------------------------------------------\n\n')
+print('--------------------------------------------- Gaming PC --------------------------------------------------------------------\n')
 
 try:
     priceLG = getPricePC('https://www.pccomponentes.pt/lg-29wn600-w-29-led-ips-ultrawide-fullhd-freesync')
@@ -159,12 +159,12 @@ except:
 
 try:
     priceWCAM = getPricePC('https://www.pccomponentes.pt/trust-gxt-1160-vero-streaming-webcam-fullhd')
-    print('Trust GXT 1160 Vero Streaming Webcam FullHD price -> ' + priceWCAM)
+    print('\nTrust GXT 1160 Vero Streaming Webcam FullHD price -> ' + priceWCAM)
 except:
     print('Trust GXT 1160 Vero Streaming Webcam FullHD not available')
 
 try:
     priceKBoard = getPricePC('https://www.pccomponentes.pt/tempest-k9-rgb-backlit-teclado-gaming-rgb')
-    print('Tempest K9 RGB Backlit Teclado Gaming RGB price -> ' + priceKBoard)
+    print('\nTempest K9 RGB Backlit Teclado Gaming RGB price -> ' + priceKBoard)
 except:
     print('Tempest K9 RGB Backlit Teclado Gaming RGB not available')
