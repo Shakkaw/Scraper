@@ -4,8 +4,8 @@ Small Web Scraper for personal use, saves prices into database and reports on th
 
 Currently scraping for:
 
--> Vagabond books price and stock availability in Amazon and Bertrand
+-> Vagabond books price and stock availability in https://www.amazon.es/ and https://www.bertrand.pt/
 
--> PC parts current price
+-> PC parts current price on https://www.pccomponentes.pt/
 
 
