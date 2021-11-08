@@ -1,3 +1,4 @@
+from _typeshed import Self
 import sqlite3
 import bs4, requests
 
@@ -22,8 +23,9 @@ def readPrice(conn,TableName):
     for row in cursor:
         print(f'The lowest price for this item is -> {row}')
 
+
 def getPriceAmz(productUrl):
-    #getting price from Amazon
+    # getting price from Amazon
 
     headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36',
@@ -36,7 +38,8 @@ def getPriceAmz(productUrl):
     soup = bs4.BeautifulSoup(html_contents, 'html.parser')
     elems = soup.select('#price')
     #elems = soup.select('#price_inside_buybox') #get the selector path for the price
-    return elems[0].text.strip()
+    return elems[0].text.strip().replace(',', '.')
+
 
 
 def getPriceBT(productUrl):
@@ -52,7 +55,7 @@ def getPriceBT(productUrl):
 
     soup = bs4.BeautifulSoup(html_contents, 'html.parser')
     elems = soup.select('#productPageRightSectionTop-saleAction-price-current') #get the selector path for the price
-    return elems[0].text.strip()
+    return elems[0].text.strip().replace(',', '.')
 
 def getPricePC(productUrl):
     #getting price from PC Componentes
