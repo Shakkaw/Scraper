@@ -216,7 +216,7 @@ try:
     addPrice(conn,'TV_LG',priceLG)
     readPrice(conn,'TV_LG')
 except:
-    print('LG 29WN600-W 29" LED IPS UltraWide FullHD FreeSync not available')
+    print('LG 29WN600-W 29" LED IPS UltraWide FullHD FreeSync not available on PC Componentes')
 
 try:
     priceWCAM = getPricePC('https://www.pccomponentes.pt/trust-gxt-1160-vero-streaming-webcam-fullhd')
@@ -225,7 +225,7 @@ try:
     addPrice(conn,'WEBCAM',priceWCAM)
     readPrice(conn,'WEBCAM')
 except:
-    print('Trust GXT 1160 Vero Streaming Webcam FullHD not available')
+    print('Trust GXT 1160 Vero Streaming Webcam FullHD not available on PC Componentes')
 
 try:
     priceKBoard = getPricePC('https://www.pccomponentes.pt/tempest-k9-rgb-backlit-teclado-gaming-rgb')
@@ -234,6 +234,24 @@ try:
     addPrice(conn,'KEYBOARD',priceKBoard)
     readPrice(conn,'KEYBOARD')
 except:
-    print('Tempest K9 RGB Backlit Teclado Gaming RGB not available')
+    print('Tempest K9 RGB Backlit Teclado Gaming RGB not available on PC Componentes')
+
+try:
+    priceCpu5 = getPricePC('https://www.pccomponentes.pt/amd-ryzen-5-5600x-37ghz')
+    print(f'AMD Ryzen 5 5600X 3.7GHz price -> {priceCpu5}')
+    createPriceTable(conn,'CPU_R5')
+    addPrice(conn,'CPU_R5',priceCpu5)
+    readPrice(conn,'CUP_R5')
+except:
+    print('AMD Ryzen 5 5600X 3.7GHz not available on PC Componentes')
+
+try:
+    priceCpu7 = getPricePC('https://www.pccomponentes.pt/amd-ryzen-5-5600x-37ghz')
+    print(f'AMD Ryzen 7 5800X 3.8GHz price -> {priceCpu7}')
+    createPriceTable(conn,'CPU_R7')
+    addPrice(conn,'CPU_R7',priceCpu7)
+    readPrice(conn,'CUP_R7')
+except:
+    print('AMD Ryzen 7 5800X 3.8GHz not available on PC Componentes')
 
 conn.close()
