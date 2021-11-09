@@ -1,26 +1,28 @@
 import sqlite3
 import bs4, requests
-
+import datetime
 
 def createPriceTable(conn,TableName):
     cursor = conn.cursor()
-    cursor.execute(
-        ' CREATE TABLE IF NOT EXISTS '+ TableName + '(Price FLOAT)'
-    )
+    create_item_table = f'''CREATE TABLE IF NOT EXISTS {TableName} (
+                            Price FLOAT,
+                            AddedDate timestamp);'''
+    cursor.execute(create_item_table)
     conn.commit()
 
 def addPrice(conn,TableName,Price):
+    dt = datetime.datetime.now()
     cursor = conn.cursor()
-    cursor.execute(
-        'INSERT INTO '+ TableName + '(Price) VALUES (' + Price + ')'
-    )
+    info = (Price, dt)
+    add_item_price = (f'INSERT INTO {TableName}(Price, AddedDate) VALUES (?, ?);')
+    cursor.execute(add_item_price, info)
     conn.commit()
 
 def readPrice(conn,TableName):
     cursor = conn.cursor()
     cursor.execute('SELECT MIN(Price) FROM '+ TableName)
     for row in cursor:
-        print(f'The lowest price for this item is -> {row}\n')
+        print(f'The lowest price for this item is -> {row[0]}\n')
 
 
 def getPriceAmz(productUrl):
