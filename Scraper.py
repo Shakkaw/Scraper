@@ -58,25 +58,9 @@ def getPriceBT(productUrl):
     elems = soup.select('#productPageRightSectionTop-saleAction-price-current') #get the selector path for the price
     return elems[0].text.strip().replace(',', '.').replace('€','')
 
-def getPricePC(productUrl):
-    #getting price from PC Componentes
-
-    headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36',
-    'Accept-Language': 'en-US'
-    }
-    res = requests.get(productUrl, headers=headers)
-    res.raise_for_status()
-    html_contents = res.text
-
-    soup = bs4.BeautifulSoup(html_contents, 'html.parser')
-    elems = soup.select('#precio-main > span.baseprice') #get the selector path for the price
-    elemsCents = soup.select('#precio-main > span.cents')  
-                                                     
-    return elems[0].text.strip() + elemsCents[0].text.strip().replace(',', '.')
-
-
 def getDiscount(productUrl):
+    # getting % discount from Bertrand
+    
     headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36',
     'Accept-Language': 'en-US'
@@ -90,6 +74,26 @@ def getDiscount(productUrl):
     return elems[0].text.strip()
 
 conn = sqlite3.connect('scraped_prices.db')
+
+
+#* no longer scraping from this site so commenting out this part
+
+# def getPricePC(productUrl):
+#     #getting price from PC Componentes
+
+#     headers = {
+#     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36',
+#     'Accept-Language': 'en-US'
+#     }
+#     res = requests.get(productUrl, headers=headers)
+#     res.raise_for_status()
+#     html_contents = res.text
+
+#     soup = bs4.BeautifulSoup(html_contents, 'html.parser')
+#     elems = soup.select('#precio-main > span.baseprice') #get the selector path for the price
+#     elemsCents = soup.select('#precio-main > span.cents')  
+                                                     
+#     return elems[0].text.strip() + elemsCents[0].text.strip().replace(',', '.')
 
 print('\n------------------------------------------- Vagabond books -------------------------------------------\n\n')
 
@@ -163,29 +167,6 @@ except:
     print('Vagabond vol.6 has no value stored\n')
 
 try:
-    vagabond7price = getPriceBT('https://www.bertrand.pt/livro/vagabond-7-takehiko-inoue/15921656')
-    vagabond7disc = getDiscount('https://www.bertrand.pt/livro/vagabond-7-takehiko-inoue/15921656')
-    print(f'Vagabond vol.7 on Bertrand-> {vagabond7price} €')
-    print(f'Discount -> {vagabond7disc}')
-    createPriceTable(conn,'VAG_7')
-    addPrice(conn,'VAG_7',vagabond7price)
-except:
-    print('Vagabond vol.7 is not available on Bertrand')
-
-try:
-    vagabond3price = getPriceAmz('https://www.amazon.es/-/pt/dp/1421522810/ref=pd_sbs_6/257-9648762-5541941?pd_rd_w=i9Ei6&pf_rd_p=dcd633b7-cb38-4615-862b-a9bd1fbbb388&pf_rd_r=3WB5J8V8ZRWFB8J3C7XP&pd_rd_r=e764c31a-581d-4dee-a71f-f043cd85168f&pd_rd_wg=uptad&pd_rd_i=1421522810&psc=1')
-    print(f'Vagabond vol.7 on Amazon -> {vagabond7price} €')
-    createPriceTable(conn,'VAG_7')
-    addPrice(conn,'VAG_7',vagabond7price)
-except:
-    print('Vagabond vol.7 is not available on Amazon')
-
-try:
-    readPrice(conn,'VAG_7')
-except:
-    print('Vagabond vol.7 has no value stored\n')
-
-try:
     vagabond10price = getPriceBT('https://www.bertrand.pt/livro/vagabond-10-takehiko-inoue/15987162')
     vagabond10disc = getDiscount('https://www.bertrand.pt/livro/vagabond-10-takehiko-inoue/15987162')
     print(f'Vagabond vol.10 on Bertrand-> {vagabond10price} €')
@@ -231,60 +212,17 @@ try:
 except:
     print('Vagabond vol.12 has no value stored\n')
 
-print('\n------------------------------------------- Gaming PC -------------------------------------------\n\n')
+#* leaving one instance here in case needed in the future
 
-try:
-    priceLG = getPricePC('https://www.pccomponentes.pt/lg-29wn600-w-29-led-ips-ultrawide-fullhd-freesync')
-    print('LG LG 29WN600-W 29" LED IPS UltraWide FullHD FreeSync price -> ' + priceLG + ' €')
-    createPriceTable(conn,'TV_LG')
-    addPrice(conn,'TV_LG',priceLG)
-    readPrice(conn,'TV_LG')
-except:
-    print('LG 29WN600-W 29" LED IPS UltraWide FullHD FreeSync not available on PC Componentes')
+# print('\n------------------------------------------- Gaming PC -------------------------------------------\n\n')
 
-try:
-    priceWCAM = getPricePC('https://www.pccomponentes.pt/trust-gxt-1160-vero-streaming-webcam-fullhd')
-    print('Trust GXT 1160 Vero Streaming Webcam FullHD price -> ' + priceWCAM + ' €')
-    createPriceTable(conn,'WEBCAM')
-    addPrice(conn,'WEBCAM',priceWCAM)
-    readPrice(conn,'WEBCAM')
-except:
-    print('Trust GXT 1160 Vero Streaming Webcam FullHD not available on PC Componentes')
-
-try:
-    priceKBoard = getPricePC('https://www.pccomponentes.pt/tempest-k9-rgb-backlit-teclado-gaming-rgb')
-    print('Tempest K9 RGB Backlit Teclado Gaming RGB price -> ' + priceKBoard + ' €')
-    createPriceTable(conn,'KEYBOARD')
-    addPrice(conn,'KEYBOARD',priceKBoard)
-    readPrice(conn,'KEYBOARD')
-except:
-    print('Tempest K9 RGB Backlit Teclado Gaming RGB not available on PC Componentes')
-
-try:
-    priceCpu5 = getPricePC('https://www.pccomponentes.pt/amd-ryzen-5-5600x-37ghz')
-    print(f'AMD Ryzen 5 5600X 3.7GHz price -> {priceCpu5} €')
-    createPriceTable(conn,'CPU_R5')
-    addPrice(conn,'CPU_R5',priceCpu5)
-    readPrice(conn,'CPU_R5')
-except:
-    print('AMD Ryzen 5 5600X 3.7GHz not available on PC Componentes')
-
-try:
-    priceCpu7 = getPricePC('https://www.pccomponentes.pt/amd-ryzen-7-5800x-38ghz')
-    print(f'AMD Ryzen 7 5800X 3.8GHz price -> {priceCpu7} €')
-    createPriceTable(conn,'CPU_R7')
-    addPrice(conn,'CPU_R7',priceCpu7)
-    readPrice(conn,'CPU_R7')
-except:
-    print('AMD Ryzen 7 5800X 3.8GHz not available on PC Componentes')
-
-try:
-    priceSSD = getPricePC('https://www.pccomponentes.pt/samsung-980-ssd-1tb-pcie-30-nvme-m2')
-    print(f'Samsung 980 SSD 1TB PCIe 3.0 NVMe M.2 price -> {priceSSD} €')
-    createPriceTable(conn,'SSD')
-    addPrice(conn,'SSD',priceSSD)
-    readPrice(conn,'SSD')
-except:
-    print('Samsung 980 SSD 1TB PCIe 3.0 NVMe M.2 price not available on PC Componentes')
+# try:
+#     priceLG = getPricePC('https://www.pccomponentes.pt/lg-29wn600-w-29-led-ips-ultrawide-fullhd-freesync')
+#     print('LG LG 29WN600-W 29" LED IPS UltraWide FullHD FreeSync price -> ' + priceLG + ' €')
+#     createPriceTable(conn,'TV_LG')
+#     addPrice(conn,'TV_LG',priceLG)
+#     readPrice(conn,'TV_LG')
+# except:
+#     print('LG 29WN600-W 29" LED IPS UltraWide FullHD FreeSync not available on PC Componentes')
 
 conn.close()
