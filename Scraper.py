@@ -98,29 +98,6 @@ conn = sqlite3.connect('scraped_prices.db')
 print('\n------------------------------------------- Vagabond books -------------------------------------------\n\n')
 
 try:
-    vagabond3price = getPriceBT('https://www.bertrand.pt/livro/vagabond-3-takehiko-inoue/15711331')
-    vagabond3disc = getDiscount('https://www.bertrand.pt/livro/vagabond-3-takehiko-inoue/15711331')
-    print(f'Vagabond vol.3 on Bertrand -> {vagabond3price} €')
-    print(f'Discount -> {vagabond3disc}')
-    createPriceTable(conn,'VAG_3')
-    addPrice(conn,'VAG_3',vagabond3price)
-except:
-    print('Vagabond vol.3 is not available on Bertrand')
-
-try:
-    vagabond3price = getPriceAmz('https://www.amazon.es/dp/1421522454/ref=monarch_sidesheet')
-    print(f'Vagabond vol.3 on Amazon -> {vagabond3price} €')
-    createPriceTable(conn,'VAG_3')
-    addPrice(conn,'VAG_3',vagabond3price)
-except:
-    print('Vagabond vol.3 is not available on Amazon')
-
-try:
-    readPrice(conn,'VAG_3')
-except:
-    print('Vagabond vol.3 has no value stored\n')
-
-try:
     vagabond4price = getPriceBT('https://www.bertrand.pt/livro/vagabond-takehiko-inoue/15790066')
     vagabond4disc = getDiscount('https://www.bertrand.pt/livro/vagabond-takehiko-inoue/15790066')
     print(f'Vagabond vol.4 on Bertrand -> {vagabond4price} €')
