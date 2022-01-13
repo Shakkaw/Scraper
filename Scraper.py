@@ -1,6 +1,9 @@
+#!/usr/bin/env python
+
 import sqlite3
 import bs4, requests
 import datetime
+import time
 
 def createPriceTable(conn,TableName):
     cursor = conn.cursor()
@@ -73,7 +76,7 @@ def getDiscount(productUrl):
     elems = soup.select('#productPageRightSectionTop-stickers-discount > div > div') #get the selector path for the discount
     return elems[0].text.strip()
 
-conn = sqlite3.connect('scraped_prices.db')
+conn = sqlite3.connect('/home/shakaw/Documents/PythonProjects/ShakawPy/Scraper/scraped_prices.db')
 
 
 #* no longer scraping from this site so commenting out this part
@@ -203,3 +206,5 @@ except:
 #     print('LG 29WN600-W 29" LED IPS UltraWide FullHD FreeSync not available on PC Componentes')
 
 conn.close()
+
+time.sleep(30);
