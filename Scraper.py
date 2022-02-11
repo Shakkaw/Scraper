@@ -43,8 +43,7 @@ def Scraper():
         soup = bs4.BeautifulSoup(html_contents, 'html.parser')
         elems = soup.select('#price')
         #elems = soup.select('#price_inside_buybox') #get the selector path for the price
-        return elems[0].text.strip().replace(',', '.')
-
+        return elems[0].text.replace(',','.').replace('€','').strip()
 
 
     def getPriceBT(productUrl):
