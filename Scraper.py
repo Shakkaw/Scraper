@@ -4,6 +4,9 @@ import sqlite3
 import bs4, requests
 import datetime
 import time
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 
 def Scraper():
     def createPriceTable(conn,TableName):
@@ -41,8 +44,8 @@ def Scraper():
         html_contents = res.text
 
         soup = bs4.BeautifulSoup(html_contents, 'html.parser')
-        elems = soup.select('#price')
-        #elems = soup.select('#price_inside_buybox') #get the selector path for the price
+        #elems = soup.select('#price')
+        elems = soup.select('#corePriceDisplay_desktop_feature_div > div.a-section.a-spacing-none.aok-align-center > span.a-price.aok-align-center.reinventPricePriceToPayMargin.priceToPay > span.a-offscreen') #get the selector path for the price
         return elems[0].text.replace(',','.').replace('€','').strip()
 
 
@@ -77,6 +80,32 @@ def Scraper():
         return elems[0].text.strip()
 
     conn = sqlite3.connect('/home/shakaw/Documents/PythonProjects/ShakawPy/Scraper/scraped_prices.db')
+
+    def getPricePcD(productUrl):
+        #getting price from PcDiga
+        
+        # Set the path to the Brave executable
+        chromium_path = '/usr/bin/brave'
+        options = Options()
+        options.add_argument('--headless')
+        options.add_argument('--window-size=1920x1080')
+        options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
+        options.binary_location = chromium_path
+
+        # Create a new instance of the Chrome driver in headless mode
+        driver = webdriver.Chrome(options=options)
+
+        driver.get(productUrl)
+        driver.implicitly_wait(10)
+
+        # Find the element and extract its text
+        element = driver.find_element(By.XPATH, '//*[@id="body-overlay"]/div[2]/div[1]/main/div[2]/div[2]/div/div/div[1]/div/div[1]/div')
+        price = element.text.strip().replace(',', '.').replace('€','')
+
+        # Close the browser
+        driver.quit()
+
+        return price
 
 
     #* no longer scraping from this site so commenting out this part
@@ -124,28 +153,6 @@ def Scraper():
     except:
         print('Vagabond vol.10 has no value stored\n')
 
-    try:
-        vagabond12price = getPriceBT('https://www.bertrand.pt/livro/vagabond-takehiko-inoue/16241581')
-        vagabond12disc = getDiscount('https://www.bertrand.pt/livro/vagabond-takehiko-inoue/16241581')
-        print(f'Vagabond vol.12 on Bertrand -> {vagabond12price} €')
-        print(f'Discount -> {vagabond12disc}')
-        createPriceTable(conn,'VAG_12')
-        addPrice(conn,'VAG_12',vagabond12price)
-    except:
-        print('Vagabond vol.12 is not available on Bertrand')
-
-    try:
-        vagabond12price = getPriceAmz('https://www.amazon.es/-/pt/dp/1421573342/ref=sr_1_1?dchild=1&keywords=vagabond+vol%2C12&qid=1635865313&qsid=257-9648762-5541941&sr=8-1&sres=1421573342%2CB08PMT7D2N%2CB0923DVKD4%2C1421549298%2C8415922957%2C8415922949%2CB017SIWRGG%2CB01M8MEWTJ%2CB008V4OH7O%2CB008V4NYGE%2CB008SNP4OI%2CB07VS9QH1D%2CB00RY9M4EK%2CB00PH9FB5I%2CB0006OBUXG%2CB012HUPMNU%2CB08X4X24QJ%2C1421533235%2C1421528622%2C1421533243')
-        print(f'Vagabond vol.12 on Amazon ->  {vagabond12price} €')
-        createPriceTable(conn,'VAG_12')
-        addPrice(conn,'VAG_12',vagabond12price)
-    except:
-        print('Vagabond vol.12 is not available on Amazon')
-
-    try:
-        readPrice(conn,'VAG_12')
-    except:
-        print('Vagabond vol.12 has no value stored\n')
 
 #* leaving one instance here in case needed in the future
 
@@ -159,6 +166,63 @@ def Scraper():
 #     readPrice(conn,'TV_LG')
 # except:
 #     print('LG 29WN600-W 29" LED IPS UltraWide FullHD FreeSync not available on PC Componentes')
+
+    print('\n------------------------------------------- MOPA -------------------------------------------\n\n')
+
+    try:
+        vileda_mopa = getPriceAmz('https://www.amazon.es/-/pt/dp/B005U94N9A/ref=lp_2165653031_1_2?sbo=RZvfv%2F%2FHxDF%2BO5021pAnSA%3D%3D&th=1')
+        print(f'Vileda Ultramax Mopa on Amazon -> {vileda_mopa} €')
+        createPriceTable(conn,'MOPA')
+        addPrice(conn,'MOPA',vileda_mopa)
+    except:
+        print('Vileda Ultramax Mopa is not available on Amazon')
+
+    try:
+        readPrice(conn,'MOPA')
+    except:
+        print('Vileda Ultramax Mopa has no value stored\n')
+
+
+    print('\n------------------------------------------- NAS -------------------------------------------\n\n')
+
+    try:
+        priceHDD = getPricePcD('https://www.pcdiga.com/armazenamento/armazenamento-interno/discos-rigidos-hdd/disco-rigido-3-5-seagate-ironwolf-6tb-5900rpm-256mb-sata-iii-st6000vn006-st6000vn006')
+        print('Disco Rígido 3.5" Seagate IronWolf 6TB 5900RPM 256MB SATA III price -> ' + priceHDD + ' €')
+        createPriceTable(conn,'HDD')
+        addPrice(conn,'HDD',priceHDD)
+    except:
+        print('Disco Rígido 3.5" Seagate IronWolf 6TB 5900RPM 256MB SATA III not available on PC Diga')
+
+    try:
+        readPrice(conn,'HDD')
+    except:
+        print('Disco Rígido 3.5" Seagate IronWolf 6TB 5900RPM 256MB SATA III has no value stored\n')
+
+    try:
+        price220j = getPricePcD('https://www.pcdiga.com/nas-synology-diskstation-ds220j-2-baias-15-130007830-4711174723447')
+        print('NAS Synology DiskStation DS220j 2 Baías price -> ' + price220j + ' €')
+        createPriceTable(conn,'NASj')
+        addPrice(conn,'NASj',price220j)
+    except:
+        print('NAS Synology DiskStation DS220j 2 Baías not available on PC Diga')
+
+    try:
+        readPrice(conn,'NASj')
+    except:
+        print('NAS Synology DiskStation DS220j 2 Baías has no value stored\n')
+
+    try:
+        price220plus = getPricePcD('https://www.pcdiga.com/nas-synology-diskstation-ds220-2-baias-ds220-4711174723478')
+        print('NAS Synology DiskStation DS220+ 2 Baías price -> ' + price220plus + ' €')
+        createPriceTable(conn,'NASplus')
+        addPrice(conn,'NASplus',price220plus)
+    except:
+        print('NAS Synology DiskStation DS220+ 2 Baías not available on PC Diga')
+
+    try:
+        readPrice(conn,'NASplus')
+    except:
+        print('NAS Synology DiskStation DS220+ 2 Baías has no value stored\n')
 
     conn.close()
 
