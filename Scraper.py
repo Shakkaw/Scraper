@@ -224,6 +224,9 @@ def Scraper():
     except:
         print('NAS Synology DiskStation DS220+ 2 Baías has no value stored\n')
 
+
+    print(f'The cost of your NAS system at this moment would be BUDGET = {round(((float(priceHDD)*2) + float(price220j)))}€  or PERFORMANCE = {round(((float(priceHDD)*2) + float(price220plus)))}€')
+
     conn.close()
 
     time.sleep(30);
