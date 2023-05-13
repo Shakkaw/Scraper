@@ -81,34 +81,68 @@ def Scraper():
 
     conn = sqlite3.connect('/home/shakaw/Documents/PythonProjects/ShakawPy/Scraper/scraped_prices.db')
 
-    def getPricePcD(productUrl):
-        #getting price from PcDiga
+    #* PC Diga - not scaping atm
+
+    # def getPricePcD(productUrl):
+    #     #getting price from PcDiga
         
-        # Set the path to the Brave executable
-        chromium_path = '/usr/bin/brave'
-        options = Options()
-        options.add_argument('--headless')
-        options.add_argument('--window-size=1920x1080')
-        options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
-        options.binary_location = chromium_path
+    #     # Set the path to the Brave executable
+    #     chromium_path = '/usr/bin/brave'
+    #     options = Options()
+    #     options.add_argument('--headless')
+    #     options.add_argument('--window-size=1920x1080')
+    #     options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
+    #     options.binary_location = chromium_path
 
-        # Create a new instance of the Chrome driver in headless mode
-        driver = webdriver.Chrome(options=options)
+    #     # Create a new instance of the Chrome driver in headless mode
+    #     driver = webdriver.Chrome(options=options)
 
-        driver.get(productUrl)
-        driver.implicitly_wait(10)
+    #     driver.get(productUrl)
+    #     driver.implicitly_wait(10)
 
-        # Find the element and extract its text
-        element = driver.find_element(By.XPATH, '//*[@id="body-overlay"]/div[2]/div[1]/main/div[2]/div[2]/div/div/div[1]/div/div[1]/div')
-        price = element.text.strip().replace(',', '.').replace('€','')
+    #     # Find the element and extract its text
+    #     element = driver.find_element(By.XPATH, '//*[@id="body-overlay"]/div[2]/div[1]/main/div[2]/div[2]/div/div/div[1]/div/div[1]/div')
+    #     price = element.text.strip().replace(',', '.').replace('€','')
 
-        # Close the browser
-        driver.quit()
+    #     # Close the browser
+    #     driver.quit()
 
-        return price
+    #     return price
 
 
-    #* no longer scraping from this site so commenting out this part
+    #* Kinda not works sometimes... KuantuKusta - not scraping from here atm
+    # def getPriceKK(productUrl):
+    #     #getting price from KuantoKusta
+        
+    #     # Set the path to the Brave executable
+    #     chromium_path = '/usr/bin/brave'
+    #     options = Options()
+    #     options.add_argument('--headless')
+    #     options.add_argument('--window-size=1920x1080')
+    #     options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
+    #     options.binary_location = chromium_path
+
+    #     # Create a new instance of the Chrome driver in headless mode
+    #     driver = webdriver.Chrome(options=options)
+
+    #     driver.get(productUrl)
+    #     driver.implicitly_wait(10)
+
+    #     # Find the element and extract its text
+    #     try:
+    #         element = driver.find_element(By.XPATH, '//*[@id="__next"]/main/div[2]/div[2]/div/div[5]/div/div/div[2]/span/text()')
+    #         print(element.text.strip().replace(',', '.').replace('€',''))
+    #     except:
+    #         element = driver.find_element(By.XPATH, '//*[@id="__next"]/main/div[2]/div[2]/div/div[5]/div/div/div[3]/span')
+    #         print(element.text.strip().replace(',', '.').replace('€',''))
+    #     price = element.text.strip().replace(',', '.').replace('€','')
+    #     # Close the browser
+    #     driver.quit()
+
+    #     return price
+
+
+    #* PC Componentes - not scraping from here atm
 
     # def getPricePC(productUrl):
     #     #getting price from PC Componentes
@@ -181,51 +215,6 @@ def Scraper():
         readPrice(conn,'MOPA')
     except:
         print('Vileda Ultramax Mopa has no value stored\n')
-
-
-    print('\n------------------------------------------- NAS -------------------------------------------\n\n')
-
-    try:
-        priceHDD = getPricePcD('https://www.pcdiga.com/armazenamento/armazenamento-interno/discos-rigidos-hdd/disco-rigido-3-5-seagate-ironwolf-6tb-5900rpm-256mb-sata-iii-st6000vn006-st6000vn006')
-        print('Disco Rígido 3.5" Seagate IronWolf 6TB 5900RPM 256MB SATA III price -> ' + priceHDD + ' €')
-        createPriceTable(conn,'HDD')
-        addPrice(conn,'HDD',priceHDD)
-    except:
-        print('Disco Rígido 3.5" Seagate IronWolf 6TB 5900RPM 256MB SATA III not available on PC Diga')
-
-    try:
-        readPrice(conn,'HDD')
-    except:
-        print('Disco Rígido 3.5" Seagate IronWolf 6TB 5900RPM 256MB SATA III has no value stored\n')
-
-    try:
-        price220j = getPricePcD('https://www.pcdiga.com/nas-synology-diskstation-ds220j-2-baias-15-130007830-4711174723447')
-        print('NAS Synology DiskStation DS220j 2 Baías price -> ' + price220j + ' €')
-        createPriceTable(conn,'NASj')
-        addPrice(conn,'NASj',price220j)
-    except:
-        print('NAS Synology DiskStation DS220j 2 Baías not available on PC Diga')
-
-    try:
-        readPrice(conn,'NASj')
-    except:
-        print('NAS Synology DiskStation DS220j 2 Baías has no value stored\n')
-
-    try:
-        price220plus = getPricePcD('https://www.pcdiga.com/nas-synology-diskstation-ds220-2-baias-ds220-4711174723478')
-        print('NAS Synology DiskStation DS220+ 2 Baías price -> ' + price220plus + ' €')
-        createPriceTable(conn,'NASplus')
-        addPrice(conn,'NASplus',price220plus)
-    except:
-        print('NAS Synology DiskStation DS220+ 2 Baías not available on PC Diga')
-
-    try:
-        readPrice(conn,'NASplus')
-    except:
-        print('NAS Synology DiskStation DS220+ 2 Baías has no value stored\n')
-
-
-    print(f'The cost of your NAS system at this moment would be BUDGET = {round(((float(priceHDD)*2) + float(price220j)))}€  or PERFORMANCE = {round(((float(priceHDD)*2) + float(price220plus)))}€')
 
     conn.close()
 
