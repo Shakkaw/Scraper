@@ -50,34 +50,56 @@ def Scraper():
 
 
     def getPriceBT(productUrl):
-        # getting price from Bertrand
-
-        headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36',
-        'Accept-Language': 'en-US'
-        }
-        res = requests.get(productUrl, headers=headers)
-        res.raise_for_status()
-        html_contents = res.text
-
-        soup = bs4.BeautifulSoup(html_contents, 'html.parser')
-        elems = soup.select('#productPageRightSectionTop-saleAction-price-current') #get the selector path for the price
-        return elems[0].text.strip().replace(',', '.').replace('€','')
-
-    def getDiscount(productUrl):
-        # getting % discount from Bertrand
+        #getting price from Bertrand
         
-        headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36',
-        'Accept-Language': 'en-US'
-        }
-        res = requests.get(productUrl, headers=headers)
-        res.raise_for_status()
-        html_contents = res.text
+        # Set the path to the Brave executable
+        chromium_path = '/usr/bin/brave'
+        options = Options()
+        options.add_argument('--headless')
+        options.add_argument('--window-size=1920x1080')
+        options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
+        options.binary_location = chromium_path
 
-        soup = bs4.BeautifulSoup(html_contents, 'html.parser') 
-        elems = soup.select('#productPageRightSectionTop-stickers-discount > div > div') #get the selector path for the discount
-        return elems[0].text.strip()
+        # Create a new instance of the Chrome driver in headless mode
+        driver = webdriver.Chrome(options=options)
+
+        driver.get(productUrl)
+        driver.implicitly_wait(10)
+
+        # Find the element and extract its text
+        element = driver.find_element(By.XPATH, '//*[@id="productPageRightSectionTop-saleAction-price-current"]')
+        price = element.text.strip().replace(',', '.').replace('€','')
+
+        # Close the browser
+        driver.quit()
+
+        return price
+    
+    def getAvailable(productUrl):
+        #getting price from PcDiga
+        
+        # Set the path to the Brave executable
+        chromium_path = '/usr/bin/brave'
+        options = Options()
+        options.add_argument('--headless')
+        options.add_argument('--window-size=1920x1080')
+        options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
+        options.binary_location = chromium_path
+
+        # Create a new instance of the Chrome driver in headless mode
+        driver = webdriver.Chrome(options=options)
+
+        driver.get(productUrl)
+        driver.implicitly_wait(10)
+
+        # Find the element and extract its text
+        element = driver.find_element(By.XPATH, '//*[@id="productPageRightSectionTop-salesInfo-notAvailable"]/div/span')
+        available_status = element.text.strip()
+
+        # Close the browser
+        driver.quit()
+
+        return available_status
 
     conn = sqlite3.connect('/home/shakaw/Documents/PythonProjects/ShakawPy/Scraper/scraped_prices.db')
 
@@ -165,14 +187,16 @@ def Scraper():
     print('\n------------------------------------------- Vagabond books -------------------------------------------\n\n')
 
     try:
-        vagabond10price = getPriceBT('https://www.bertrand.pt/livro/vagabond-10-takehiko-inoue/15987162')
-        vagabond10disc = getDiscount('https://www.bertrand.pt/livro/vagabond-10-takehiko-inoue/15987162')
-        print(f'Vagabond vol.10 on Bertrand-> {vagabond10price} €')
-        print(f'Discount -> {vagabond10disc}')
+        vagabond10price = getPriceBT('https://www.bertrand.pt/livro/vagabond-vol-10-takehiko-inoue/15987162')
+        vagabond10avail = getAvailable('https://www.bertrand.pt/livro/vagabond-vol-10-takehiko-inoue/15987162')
+        if vagabond10avail != "NOTIFIQUEM-ME QUANDO DISPONÍVEL":
+            print(f'Vagabond vol.10 on Bertrand-> {vagabond10price} €')
+        else:
+            print('Vagabond vol.10 is not available on Bertrand')
         createPriceTable(conn,'VAG_10')
         addPrice(conn,'VAG_10',vagabond10price)
     except:
-        print('Vagabond vol.10 is not available on Bertrand')
+        print('Error getting Vagabond vol.10 info on Bertrand')
 
     try:
         vagabond10price = getPriceAmz('https://www.amazon.es/-/pt/dp/1421529157/ref=sr_1_2?dchild=1&keywords=vagabond+vol%2C10&qid=1635865293&qsid=257-9648762-5541941&sr=8-2&sres=B01B99K6TA%2C1421529157%2C1591163404%2C1421549298%2CB00HKW3XZU%2CB09HQW2CZC%2CB09DT9DYWV%2CB0923D58GQ%2CB0184W8UWK%2C4063729478%2C8415922957%2C8415922949%2C8893760886%2CB08YN1LVV8%2CB07H9HZ753%2CB0006OBUWW%2CB0170945UO%2CB016ZZPJT0%2CB00TY5H6LS%2CB00RY9M4EK')
@@ -180,7 +204,7 @@ def Scraper():
         createPriceTable(conn,'VAG_10')
         addPrice(conn,'VAG_10',vagabond10price)
     except:
-        print('Vagabond vol.10 is not available on Amazon')
+        print('Error getting Vagabond vol.10 info on Amazon')
 
     try:
         readPrice(conn,'VAG_10')
@@ -209,7 +233,7 @@ def Scraper():
         createPriceTable(conn,'MOPA')
         addPrice(conn,'MOPA',vileda_mopa)
     except:
-        print('Vileda Ultramax Mopa is not available on Amazon')
+        print('Error getting Vileda Ultramax Mopa info on Amazon')
 
     try:
         readPrice(conn,'MOPA')
